@@ -19,20 +19,18 @@ div.appendChild(paginationUl);
 const searchForm = document.createElement('div');
 const pageHeader = document.querySelector('.page-header');
 searchForm.className = 'student-search';
-searchForm.innerHTML = '<input placeholder="Search for students..."><button>Search</button>';
+searchForm.innerHTML = '<input placeholder=\'Search for students...\'><button>Search</button>';
 pageHeader.appendChild(searchForm);
 document.querySelector('button').addEventListener('click', findMatches);
 
 
-
-// Display only 10 students on per page
+// Display only 10 students
 function showTenStudents() {
     for (let i = 0; i < students.length; i++) {
-        let student = students[i];
-        if (i <= 9 && i >= 0) {
-            student.style.display = '';
+        if (i < studentsPerPage ) {
+            students[i].style.display = '';
         } else {
-            student.style.display = 'none';
+            students[i].style.display = 'none';
         }
     }
 }
@@ -49,7 +47,7 @@ function calulateNumberPages() {
         listLink.textContent = i + 1;
         li.appendChild(listLink);
         paginationUl.appendChild(li);
-        listLink.addEventListener("click", onActivePage);
+        listLink.addEventListener('click', onActivePage);
         // if first page is 1 add active class to link
         if (1 === i + 1) {
             listLink.className = 'active';
@@ -63,7 +61,7 @@ function calulateNumberPages() {
 // set active link and disp
 function onActivePage() {
     const currentPage = this.innerText;
-    const paginationLinks = document.getElementsByClassName("pagination")[0].children[0].children;
+    const paginationLinks = document.getElementsByClassName('pagination')[0].children[0].children;
 
     // Hide students
     for (let i = 0; i < students.length; i++) {
@@ -73,15 +71,15 @@ function onActivePage() {
     // set active class on pagination link
     for (let i = 0; i < paginationLinks.length; i++) {
         if (paginationLinks[i].children[0].textContent === currentPage) {
-            paginationLinks[i].children[0].classList.add("active");
+            paginationLinks[i].children[0].classList.add('active');
         } else {
-            paginationLinks[i].children[0].classList.remove("active");
+            paginationLinks[i].children[0].classList.remove('active');
         }
     }
 
-    //Find what page number and display students on page specific
+    //Find what page number and display students on page
     for (let i = 0; i < students.length; i++) {
-        if (i <= currentPage * studentsPerPage && i >= (currentPage - 1) * studentsPerPage) {
+        if (i >= (currentPage * studentsPerPage) - studentsPerPage && i < currentPage * studentsPerPage) {
             students[i].style.display = '';
         }
     }
@@ -104,18 +102,20 @@ function findMatches() {
             if (studentName[i].innerHTML.indexOf(searchInput) !== -1) {
                 students[i].style.display = '';
                 studentsMatch.push(i);
-                console.log(studentsMatch);
             } else {
                 students[i].style.display = 'none';
             }
         }
 
         // error meesage if zero results
-        if (studentsMatch.length === 0) {
-            // Clear input field after submiting
-            document.querySelector('input').value = '';
-            paragraph.innerHTML = 'Sorry, there\'s no matches. Search for a different name or click the search button to show all students';
-            mainDiv.insertBefore(paragraph, pageHeader.nextSibling);
+        if (studentsMatch.length > 0) {
+          paragraph.style.display = 'none';
+        } else {
+          // Clear input field after submiting
+          paragraph.style.display = '';
+          document.querySelector('input').value = '';
+          paragraph.innerHTML = 'Sorry, there\'s no matches. Search for a different name or click the search button to show all students';
+          mainDiv.insertBefore(paragraph, pageHeader.nextSibling);
         }
 
         // hide pagination
